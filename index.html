@@ -64,10 +64,6 @@
 				}
 
 				const showNum = x => (x >= 0 ? String(x) : `−${-x}`)
-				const showNumMiddle = x => {
-					const y = Math.abs(x)
-					return `${x >= 0 ? '+' : '−'} ${y === 1 ? '' : String(y)}`
-				}
 
 				const onReady = () => {
 					const aSpan = document.getElementById('a')
@@ -89,9 +85,10 @@
 							multiplier * -1 * (root1Num * root2Den + root1Den * root2Num)
 						const c = multiplier * (root1Num * root2Num + d)
 						aSpan.textContent = a === 1 ? '' : a === -1 ? '−' : showNum(a)
+						const bAbs = Math.abs(b)
 						eqnSpan.textContent = `${[
-							...(b === 0 ? [] : [`${showNumMiddle(b)}x`]),
-							...(c === 0 ? [] : [`${showNumMiddle(c)}`]),
+							...(b === 0 ? [] : [`${b > 0 ? '+' : '-'}${bAbs === 1 ? '' : bAbs}x`]),
+							...(c === 0 ? [] : [`${c > 0 ? '+' : '-'} ${Math.abs(c)}`]),
 						].join(' ')} ${rel} ${showNum(multiplier * d)}`
 
 						const isUpright = a > 0
