@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<title>Quadratic Inequality Generator</title>
+		<meta
+			name="description"
+			content="Generates quadratic inequalities practice questions"
+		/>
+		<meta name="author" content="Lauren Yim" />
+	</head>
+
+	<body>
+		<h1>Quadratic inequality generator</h1>
+		<em>by Lauren Yim</em>
+
+		<p>Solve <span id="a"></span>x<sup>2</sup> <span id="eqn"></span> for x.</p>
+
+		<details id="answer">
+			<summary>Answer</summary>
+			<p id="answer-text"></p>
+		</details>
+
+		<button id="generate">New question</button>
+
+		<script>
+			// Oh, so you want to look at the code?
+			// This was made in about an hour, so it’s definitely messy and could be improved on
+			;(() => {
+				const random = (low, high) =>
+					Math.trunc(Math.random() * (high + 1)) + low
+				const randomSgn = () => (Math.random() > 0.5 ? 1 : -1)
+				const random1To3Weighted = () => {
+					const n = Math.random()
+					return n > 0.25 ? 1 : n > 0.125 ? 2 : 3
+				}
+				const randomRel = () => {
+					const n = Math.random()
+					return n > 0.75 ? '>' : n > 0.5 ? '≥' : n > 0.25 ? '<' : '≤'
+				}
+
+				const gcd = (n, m) => {
+					let a = Math.max(n, m)
+					let b = Math.min(n, m)
+					let r = a % b
+					while (r) {
+						a = b
+						b = r
+						r = a % b
+					}
+					return b
+				}
+				const showRoot = ([num, den]) => {
+					const g = gcd(Math.abs(num), den)
+					const n = num / g
+					const d = den / g
+					return (
+						(num < 0 ? '−' : '') +
+						(d === 1
+							? String(Math.abs(n))
+							: `<sup>${Math.abs(n)}</sup>⁄<sub>${d}</sub>`)
+					)
+				}
+
+				const showNum = x => (x >= 0 ? String(x) : `−${-x}`)
+				const showNumMiddle = x => {
+					const y = Math.abs(x)
+					return `${x >= 0 ? '+' : '−'} ${y === 1 ? '' : String(y)}`
+				}
+
+				const onReady = () => {
+					const aSpan = document.getElementById('a')
+					const eqnSpan = document.getElementById('eqn')
+					const answerP = document.getElementById('answer-text')
+					const answerDetails = document.getElementById('answer')
+
+					const generate = () => {
+						const root1Num = randomSgn() * random(1, 8)
+						const root1Den = random1To3Weighted()
+						const root2Num = randomSgn() * random(1, 8)
+						const root2Den = random1To3Weighted()
+						const multiplier = randomSgn() * random1To3Weighted()
+						const rel = randomRel()
+						const d = randomSgn() * random(1, 10)
+
+						const a = multiplier * root1Den * root2Den
+						const b =
+							multiplier * -1 * (root1Num * root2Den + root1Den * root2Num)
+						const c = multiplier * (root1Num * root2Num + d)
+						aSpan.textContent = a === 1 ? '' : a === -1 ? '−' : showNum(a)
+						eqnSpan.textContent = `${[
+							...(b === 0 ? [] : [`${showNumMiddle(b)}x`]),
+							...(c === 0 ? [] : [`${showNumMiddle(c)}`]),
+						].join(' ')} ${rel} ${showNum(multiplier * d)}`
+
+						const isUpright = a > 0
+						const root1 = root1Num / root1Den
+						const root2 = root2Num / root2Den
+
+						if (root1 === root2) {
+							const root = [root1Num, root1Den]
+							answerP.innerHTML =
+								(isUpright && rel === '<') || (!isUpright && rel === '>')
+									? 'no solutions'
+									: (isUpright && rel === '≤') || (!isUpright && rel === '≥')
+									? `x = ${showRoot(root)}`
+									: (isUpright && rel === '>') || (!isUpright && rel === '<')
+									? `x ≠ ${showRoot(root)}`
+									: `x ∈ ℝ`
+						} else {
+							const [rootL, rootH] =
+								root1 < root2
+									? [
+											[root1Num, root1Den],
+											[root2Num, root2Den],
+									  ]
+									: [
+											[root2Num, root2Den],
+											[root1Num, root1Den],
+									  ]
+							answerP.innerHTML =
+								(isUpright && rel === '<') || (!isUpright && rel === '>')
+									? `${showRoot(rootL)} &lt; x &lt; ${showRoot(rootH)}`
+									: (isUpright && rel === '≤') || (!isUpright && rel === '≥')
+									? `${showRoot(rootL)} ≤ x ≤ ${showRoot(rootH)}`
+									: (isUpright && rel === '>') || (!isUpright && rel === '<')
+									? `x &lt; ${showRoot(rootL)} or x &gt; ${showRoot(rootH)}`
+									: `x ≤ ${showRoot(rootL)} or x ≥ ${showRoot(rootH)}`
+						}
+					}
+
+					generate()
+					document.getElementById('generate').addEventListener('click', () => {
+						answerDetails.open = false
+						generate()
+					})
+				}
+
+				document.readyState === 'complete'
+					? onReady()
+					: window.addEventListener('DOMContentLoaded', onReady)
+			})()
+		</script>
+	</body>
+</html>
