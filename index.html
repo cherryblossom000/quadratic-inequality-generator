@@ -11,9 +11,17 @@
 
 	<body>
 		<h1>Quadratic inequality generator</h1>
-		<em>by Lauren Yim</em>
+		<p>
+			<a
+				href="https://github.com/cherryblossom000/quadratic-inequality-generator"
+				><em>by Lauren Yim</em></a
+			>
+		</p>
 
-		<p>This generates ‘simple’ quadratic inequalities, and they should be able to be solved by factorising by finding factors of ac that add to b.</p>
+		<p>
+			This generates ‘simple’ quadratic inequalities, and they should be able to
+			be solved by factorising by finding factors of ac that add to b.
+		</p>
 
 		<p>Solve <span id="a"></span>x<sup>2</sup> <span id="eqn"></span> for x.</p>
 
@@ -87,7 +95,9 @@
 						aSpan.textContent = a === 1 ? '' : a === -1 ? '−' : showNum(a)
 						const bAbs = Math.abs(b)
 						eqnSpan.textContent = `${[
-							...(b === 0 ? [] : [`${b > 0 ? '+' : '-'}${bAbs === 1 ? '' : bAbs}x`]),
+							...(b === 0
+								? []
+								: [`${b > 0 ? '+' : '-'}${bAbs === 1 ? '' : bAbs}x`]),
 							...(c === 0 ? [] : [`${c > 0 ? '+' : '-'} ${Math.abs(c)}`]),
 						].join(' ')} ${rel} ${showNum(multiplier * d)}`
 
